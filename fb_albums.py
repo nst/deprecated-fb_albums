@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 __author__ = "Nicolas Seriot"
-__date__ = "2010-09-25"
+__date__ = "2010-09-26"
 __license__ = "GPL"
 
 """
@@ -13,19 +13,22 @@ import urllib
 import urllib2
 import cookielib
 import optparse
+import getpass
 from optparse import OptionParser
 
 # parse the command line
-parser = optparse.OptionParser("usage: %prog -e EMAIL -p PASSWORD -a ALBUM_URL")
+parser = optparse.OptionParser("usage: %prog -e EMAIL -a ALBUM_URL [-p PASSWORD]")
 parser.add_option("-e", "--email", dest="email")
 parser.add_option("-p", "--password", dest="password")
 parser.add_option("-a", "--album_url", dest="album_url")
 
 (options, args) = parser.parse_args()
 
-if not options.email or not options.password or not options.album_url:
+if not options.email or not options.album_url:
     parser.error("-- please fill all options")
     exit(0)
+
+password = options.password if options.password else getpass.getpass("Password: ")
 
 # install an url opener with cookies
 cookie_jar = cookielib.LWPCookieJar()
@@ -36,7 +39,7 @@ print "-- getting facebook cookies"
 urllib2.urlopen('http://www.facebook.com/')
 
 print "-- loggin in"
-query_args = { 'email':options.email, 'pass':options.password }
+query_args = { 'email':options.email, 'pass':password }
 encoded_args = urllib.urlencode(query_args)
 url = 'https://login.facebook.com/login.php'
 urllib2.urlopen(url, encoded_args)
